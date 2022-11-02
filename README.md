@@ -17,3 +17,17 @@ sls offline start
 ```shell
 curl -XPOST {{url}}/dev/message/some-topic -d '{"key": "value", "item": {"name": "awesome"}}'
 ```
+
+## Deploy
+
+Note : a MSK instance is required
+
+```shell
+sls deploy
+```
+
+## Remove
+
+```shell
+sls remove
+```
