@@ -20,7 +20,6 @@ export const handler: Handler = async (event: APIGatewayEvent, context: Context,
 
     const pathParameters = event.pathParameters;
     const topic: string = pathParameters?.topic || 'default-topic';
-    console.log(event.pathParameters);
     await producer.connect();
     await producer.send({
         topic,
