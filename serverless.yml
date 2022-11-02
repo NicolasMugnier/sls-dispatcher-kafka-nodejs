@@ -1,0 +1,23 @@
+service: sls-dispatcher-kafka-nodejs
+
+frameworkVersion: '2 || 3'
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-plugin-typescript 
+  - serverless-offline
+
+provider:
+  name: aws
+  region: eu-west-1
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+
+functions:
+  dispatcher:
+    handler: src/api/dispatcher.handler
+    iamRoleStatements:
+    events:
+      - http:
+          path: message/{topic}
+          method: post
