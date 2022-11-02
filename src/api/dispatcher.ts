@@ -19,19 +19,21 @@ const producer = kafka.producer();
 export const handler: Handler = async (event: APIGatewayEvent, context: Context, callback): Promise<Response> => {
 
     const pathParameters = event.pathParameters;
+    const correlationId: string = event.headers['X-Correlation-ID'] || uuid();
+    const origin: string = event.headers['X-Origin'] || '';
     const topic: string = pathParameters?.topic || 'default-topic';
     await producer.connect();
     await producer.send({
         topic,
         messages: [
-            { value: event.body },
+            { value: event.body, headers: { 'X-Correlation-ID': correlationId, 'X-Origin' : origin} },
         ],
     });
 
     return Promise.resolve({
         statusCode: 202,
         body: JSON.stringify({
-          "asyncOperationId": uuid()
+          "status": "Accepted"
         }),
       });
 };
