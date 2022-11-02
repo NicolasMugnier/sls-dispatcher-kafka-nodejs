@@ -22,18 +22,29 @@ export const handler: Handler = async (event: APIGatewayEvent, context: Context,
     const correlationId: string = event.headers['X-Correlation-ID'] || uuid();
     const origin: string = event.headers['X-Origin'] || '';
     const topic: string = pathParameters?.topic || 'default-topic';
-    await producer.connect();
-    await producer.send({
-        topic,
-        messages: [
-            { value: event.body, headers: { 'X-Correlation-ID': correlationId, 'X-Origin' : origin} },
-        ],
-    });
-
-    return Promise.resolve({
-        statusCode: 202,
-        body: JSON.stringify({
-          "status": "Accepted"
-        }),
-      });
+    try {
+        await producer.connect();
+        await producer.send({
+            topic,
+            messages: [
+                { value: event.body, headers: { 'X-Correlation-ID': correlationId, 'X-Origin' : origin} },
+            ],
+        });
+    
+        return Promise.resolve({
+            statusCode: 202,
+            body: JSON.stringify({
+              "status": "Accepted"
+            }),
+        });
+    } catch (e) {
+        return Promise.resolve({
+            statusCode: 400,
+            body: JSON.stringify({
+              "status": "Error",
+              "message": "Bad Request"
+            }),
+        });
+    }
+    
 };
